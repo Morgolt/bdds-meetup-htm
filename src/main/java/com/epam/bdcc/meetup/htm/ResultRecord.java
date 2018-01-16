@@ -60,9 +60,7 @@ public class ResultRecord {
         double lat = Double.parseDouble(latitude);
         double speed = Double.parseDouble(this.speed) / 3.6;
 
-        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         Map<String, Object> record = new HashMap<>();
-        record.put("ts", format.parseDateTime(time));
         record.put("location", new Tuple(lon, lat, speed));
         return record;
     }

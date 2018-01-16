@@ -2,61 +2,18 @@ package com.epam.bdcc.meetup.htm;
 
 import org.numenta.nupic.Parameters;
 import org.numenta.nupic.algorithms.Anomaly;
-import org.numenta.nupic.algorithms.Classifier;
-import org.numenta.nupic.util.Tuple;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class HTMParameters {
 
-    private static Parameters getEncoderParameters() {
-        Map<String, Map<String, Object>> fieldEncodings = setupMap(
-                null,
-                2048,
-                51,
-                0.0D,
-                0.0D,
-                0.0D,
-                0.0D,
-                null,
-                Boolean.TRUE,
-                null,
-                "location",
-                "geo",
-                "GeospatialCoordinateEncoder");
-        fieldEncodings.get("location").put("timestep", "15");
-        fieldEncodings.get("location").put("scale", "5");
-        fieldEncodings = setupMap(fieldEncodings,
-                129,
-                51,
-                0.0D,
-                24D,
-                9.5D,
-                0.0,
-                Boolean.TRUE,
-                Boolean.FALSE,
-                null,
-                "ts",
-                "datetime",
-                "DateEncoder");
-        fieldEncodings.get("ts").put(Parameters.KEY.DATEFIELD_TOFD.getFieldName(), new Tuple(51, 9.5));
-        fieldEncodings.get("ts").put(Parameters.KEY.DATEFIELD_PATTERN.getFieldName(), "dd/MM/YYYY HH:mm:ss");
-        Parameters p = Parameters.getEncoderDefaultParameters();
-        p.set(Parameters.KEY.FIELD_ENCODING_MAP, fieldEncodings);
-        Map<String, Class<? extends Classifier>> map = new HashMap<>();
-        map.put("location", null);
-        map.put("timestamp", null);
-        p.set(Parameters.KEY.INFERRED_FIELDS, map);
-        return p;
-    }
-
     private static Parameters getSpatialPoolerParameters() {
         Parameters spParams = Parameters.getSpatialDefaultParameters();
         spParams.set(Parameters.KEY.MAX_BOOST, 1.0);
         spParams.set(Parameters.KEY.COLUMN_DIMENSIONS, new int[]{2048});
         spParams.set(Parameters.KEY.GLOBAL_INHIBITION, true);
-        spParams.set(Parameters.KEY.INPUT_DIMENSIONS, new int[]{2177});
+        spParams.set(Parameters.KEY.INPUT_DIMENSIONS, new int[]{2048});
         spParams.set(Parameters.KEY.NUM_ACTIVE_COLUMNS_PER_INH_AREA, 40.0);
         spParams.set(Parameters.KEY.POTENTIAL_PCT, 0.8);
         spParams.set(Parameters.KEY.SEED, 1956);
@@ -73,7 +30,7 @@ public class HTMParameters {
         tmParams.set(Parameters.KEY.COLUMN_DIMENSIONS, new int[]{2048});
         tmParams.set(Parameters.KEY.CONNECTED_PERMANENCE, 0.5);
         tmParams.set(Parameters.KEY.INITIAL_PERMANENCE, 0.21);
-        tmParams.set(Parameters.KEY.INPUT_DIMENSIONS, new int[]{2177});
+        tmParams.set(Parameters.KEY.INPUT_DIMENSIONS, new int[]{2048});
         tmParams.set(Parameters.KEY.MAX_SEGMENTS_PER_CELL, 128);
         tmParams.set(Parameters.KEY.MAX_SYNAPSES_PER_SEGMENT, 32);
         tmParams.set(Parameters.KEY.MIN_THRESHOLD, 3);
@@ -92,8 +49,7 @@ public class HTMParameters {
     }
 
     public static Parameters getNetworkParameters() {
-        return getEncoderParameters()
-                .union(getSpatialPoolerParameters())
+        return getSpatialPoolerParameters()
                 .union(getTemporalMemoryParameters());
     }
 

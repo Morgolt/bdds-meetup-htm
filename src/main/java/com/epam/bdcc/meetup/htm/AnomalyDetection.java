@@ -54,7 +54,7 @@ public class AnomalyDetection {
                 );
                 PERSISTENCE_API.setConfig(PERSISTENCE_CONFIG);
                 LOGGER.setLevel(Level.DEBUG);
-                processCSVFile(Paths.get(args[1]), Paths.get("output/trip_20000079_score_seq.csv"), false, createNetwork());
+                processCSVFile(Paths.get(args[1]), Paths.get("output/reversed_15s_10seq.csv"), false, createNetwork());
                 break;
             default:
                 throw new RuntimeException("Choose mode of execution: eval or train");
@@ -74,27 +74,14 @@ public class AnomalyDetection {
 
     private static MultiEncoder createEncoder() {
         MultiEncoder result = MultiEncoder.builder().build();
-        DateEncoder dateEncoder = DateEncoder
-                .builder()
-                .name("ts")
-                .formatPattern("dd/MM/YYYY HH:mm:ss")
-                .n(129)
-                .w(51)
-                .timeOfDay(51, 9.5)
-                .radius(9.5)
-                .minVal(0.0)
-                .maxVal(24.0)
-                .clipInput(Boolean.TRUE)
-                .build();
         GeospatialCoordinateEncoder geoEncoder = GeospatialCoordinateEncoder
                 .geobuilder()
-                .timestep(10)
+                .timestep(15)
                 .scale(5)
                 .n(2048)
                 .w(51)
                 .name("location")
                 .build();
-        result.addEncoder("ts", dateEncoder);
         result.addEncoder("location", geoEncoder);
         return result;
     }
